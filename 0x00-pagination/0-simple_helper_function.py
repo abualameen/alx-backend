@@ -10,4 +10,10 @@ def index_range(page, page_size):
     """
     the function return a tupple
     """
+    if page == 1:
+        page = 0
+    else:
+        page_size = page * page_size
+        page = page * 10
+    
     return ((page, page_size))
