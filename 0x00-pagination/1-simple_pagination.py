@@ -19,6 +19,7 @@ def index_range(page, page_size):
     end = start + page_size
     return (start, end)
 
+
 class Server:
     """Server class to paginate a database of popular baby names.
     """
@@ -42,8 +43,10 @@ class Server:
         """Returns the specified page of the dataset based on the provided
         page number and page size.
         """
-        assert isinstance(page, int) and page > 0, "Page must be a positive integer"
-        assert isinstance(page_size, int) and page_size > 0, "Page size must be a positive integer"
+        # Page must be a positive integer
+        assert isinstance(page, int) and page > 0,
+        # Page size must be a positive integer
+        assert isinstance(page_size, int) and page_size > 0,
 
         start, end = index_range(page, page_size)
         dataset = self.dataset()
