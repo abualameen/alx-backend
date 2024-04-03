@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-module
+LFU Cache implementation
 """
-
 
 from base_caching import BaseCaching
 
@@ -14,7 +13,9 @@ class LFUCache(BaseCaching):
     """
 
     def __init__(self):
-        """ Initialize the LFU Cache """
+        """
+        Initialize the LFU Cache
+        """
         super().__init__()
         self.frequency = {}
         self.access_order = []
@@ -26,12 +27,10 @@ class LFUCache(BaseCaching):
         if key is None or item is None:
             return
 
-        # If key already exists, update its frequency
         if key in self.cache_data:
             self.access_order.remove(key)
             self.frequency[key] += 1
         else:
-            # If key is new, add it to cache and set its frequency to 1
             if len(self.cache_data) >= self.MAX_ITEMS:
                 self.remove_least_frequent()
 
@@ -47,12 +46,10 @@ class LFUCache(BaseCaching):
         min_frequency = min(self.frequency.values())
         least_frequent_keys = [k for k, v in self.frequency.items() if v == min_frequency]
 
-        # If there are multiple least frequent keys, use LRU to decide
         if len(least_frequent_keys) > 1:
             lru_key = min(self.access_order, key=self.access_order.index)
             least_frequent_keys.remove(lru_key)
 
-        # Remove the least frequent key(s) from cache and frequency dictionary
         for key in least_frequent_keys:
             del self.cache_data[key]
             del self.frequency[key]
@@ -60,13 +57,3 @@ class LFUCache(BaseCaching):
             print("DISCARD:", key)
 
     def get(self, key):
-        """
-        Retrieve an item from the cache based on the provided key.
-        """
-        if key in self.cache_data:
-            self.frequency[key] += 1
-            self.access_order.remove(key)
-            self.access_order.append(key)
-            return self.cache_data[key]
-        else:
-            return None
