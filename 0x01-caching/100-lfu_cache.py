@@ -28,15 +28,34 @@ class LFUCache(BaseCaching):
             return
 
         if key in self.cache_data:
-            self.access_order.remove(key)
-            self.frequency[key] += 1
+            self.update_existing_key(key)
         else:
-            if len(self.cache_data) >= self.MAX_ITEMS:
-                self.remove_least_frequent()
+            self.add_new_key(key, item)
 
-            self.cache_data[key] = item
-            self.frequency[key] = 1
+        self.update_access_order(key)
 
+    def update_existing_key(self, key):
+        """
+        Update frequency count for an existing key.
+        """
+        self.frequency[key] += 1
+
+    def add_new_key(self, key, item):
+        """
+        Add a new key and its corresponding item to the cache.
+        """
+        if len(self.cache_data) >= self.MAX_ITEMS:
+            self.remove_least_frequent()
+
+        self.cache_data[key] = item
+        self.frequency[key] = 1
+
+    def update_access_order(self, key):
+        """
+        Update access order of the keys in the cache.
+        """
+        if key in self.access_order:
+            self.access_order.remove(key)
         self.access_order.append(key)
 
     def remove_least_frequent(self):
@@ -44,28 +63,32 @@ class LFUCache(BaseCaching):
         Remove the least frequent item(s) from the cache.
         """
         min_frequency = min(self.frequency.values())
-        least_frequent_keys = [
-                k for k, v in self.frequency.items() if v == min_frequency
-            ]
+        least_frequent_keys = [k for k, v in self.frequency.items() if v == min_frequency]
 
         if len(least_frequent_keys) > 1:
             lru_key = min(self.access_order, key=self.access_order.index)
             least_frequent_keys.remove(lru_key)
 
         for key in least_frequent_keys:
-            del self.cache_data[key]
-            del self.frequency[key]
-            self.access_order.remove(key)
-            print("DISCARD:", key)
+            self.discard_key(key)
+
+    def discard_key(self, key):
+        """
+        Discard a key from the cache.
+        """
+        del self.cache_data[key]
+        del self.frequency[key]
+        self.access_order.remove(key)
+        print("DISCARD:", key)
 
     def get(self, key):
         """
         Retrieve an item from the cache based on the provided key.
         """
         if key in self.cache_data:
-            self.frequency[key] += 1
-            self.access_order.remove(key)
-            self.access_order.append(key)
+            self.update_existing_key(key)
+            self.update_access_order(key)
             return self.cache_data[key]
         else:
             return None
+
