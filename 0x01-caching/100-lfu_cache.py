@@ -58,6 +58,12 @@ class LFUCache(BaseCaching):
             self.access_order.remove(key)
         self.access_order.append(key)
 
+    def reorder_cache(self):
+        """
+        Reorder cache based on access frequency and access order
+        """
+        self.access_order.sort(key=lambda k: (self.frequency[k], self.access_order.index(k)))
+
     def remove_least_frequent(self):
         """
         Remove the least frequent item(s) from the cache.
@@ -66,11 +72,10 @@ class LFUCache(BaseCaching):
         least_frequent_keys = [k for k, v in self.frequency.items() if v == min_frequency]
 
         if len(least_frequent_keys) > 1:
-            lru_key = min(self.access_order, key=self.access_order.index)
-            least_frequent_keys.remove(lru_key)
+            self.reorder_cache()
 
-        for key in least_frequent_keys:
-            self.discard_key(key)
+        key_to_remove = self.access_order[0]
+        self.discard_key(key_to_remove)
 
     def discard_key(self, key):
         """
@@ -91,4 +96,3 @@ class LFUCache(BaseCaching):
             return self.cache_data[key]
         else:
             return None
-
