@@ -13,6 +13,7 @@ class LFUCache(BaseCaching):
     Class LFUCache that inherits from BaseCaching
     and is a caching system implementing the LFU algorithm.
     """
+
     def __init__(self):
         """ Initialize the LFU Cache """
         super().__init__()
@@ -40,14 +41,15 @@ class LFUCache(BaseCaching):
             min_frequency = min(self.frequency.values())
             keys_to_discard = [
                 k for k, v in self.frequency.items() if v == min_frequency
-               ]
+            ]
             if len(keys_to_discard) > 1:
                 # If there are multiple keys with the same lowest
                 # frequency, use LRU to decide
                 lru_key = None
                 min_index = float('inf')
                 for k in keys_to_discard:
-                    if self.access_order.index(k) < min_index:
+                    if k in self.access_order and \
+                            self.access_order.index(k) < min_index:
                         min_index = self.access_order.index(k)
                         lru_key = k
                 keys_to_discard.remove(lru_key)
