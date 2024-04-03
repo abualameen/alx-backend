@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-this module is the LEAST FREQUENTLY USED CACEH
-POLICY
-
+This module implements the Least Frequently Used (LFU) cache policy.
 """
 
 from base_caching import BaseCaching
@@ -42,24 +40,27 @@ class LFUCache(BaseCaching):
             keys_to_discard = [
                 k for k, v in self.frequency.items() if v == min_frequency
             ]
-            if len(keys_to_discard) > 1:
-                # If there are multiple keys with the same lowest
-                # frequency, use LRU to decide
-                lru_key = None
-                min_index = float('inf')
-                for k in keys_to_discard:
-                    if k in self.access_order and \
-                            self.access_order.index(k) < min_index:
-                        min_index = self.access_order.index(k)
-                        lru_key = k
-                keys_to_discard.remove(lru_key)
-            discarded_key = keys_to_discard[0]
+
+            # If there are multiple keys with the same
+            # lowest frequency, use LRU to decide
+            lru_key = None
+            min_index = float('inf')
+            for k in keys_to_discard:
+                if k in self.access_order and \
+                        self.access_order.index(k) < min_index:
+                    min_index = self.access_order.index(k)
+                    lru_key = k
+
+            discarded_key = lru_key or keys_to_discard[0]
             print("DISCARD:", discarded_key)
             del self.cache_data[discarded_key]
             del self.frequency[discarded_key]
 
             # Remove discarded key from access_order
             self.access_order.remove(discarded_key)
+        
+        # Append newly added key to the end of access_order list
+        self.access_order.append(key)
 
     def get(self, key):
         """
