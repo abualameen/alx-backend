@@ -57,3 +57,13 @@ class LFUCache(BaseCaching):
             print("DISCARD:", key)
 
     def get(self, key):
+        """
+        Retrieve an item from the cache based on the provided key.
+        """
+        if key in self.cache_data:
+            self.frequency[key] += 1
+            self.access_order.remove(key)
+            self.access_order.append(key)
+            return self.cache_data[key]
+        else:
+            return None
