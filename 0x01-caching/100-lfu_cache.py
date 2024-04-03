@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-"""
-this module is the LEAST FREQUENTLY USED CACHE POLICY
-"""
-
 from base_caching import BaseCaching
 
 
@@ -24,45 +19,48 @@ class LFUCache(BaseCaching):
         """
         if key is None or item is None:
             return
-        self.cache_data[key] = item
 
-        # Update frequency of the key
-        self.frequency[key] = self.frequency.get(key, 0) + 1
-
-        # Update access order
-        if key in self.access_order:
+        # If key already exists, update its frequency
+        if key in self.cache_data:
             self.access_order.remove(key)
+            self.frequency[key] += 1
+        else:
+            # If key is new, add it to cache and set its frequency to 1
+            if len(self.cache_data) >= self.MAX_ITEMS:
+                self.remove_least_frequent()
+
+            self.cache_data[key] = item
+            self.frequency[key] = 1
+
         self.access_order.append(key)
 
-        # Discard least frequency used items if cache exceeds capacity
-        if len(self.cache_data) > self.MAX_ITEMS:
-            min_frequency = min(self.frequency.values())
-            keys_to_discard = [k for k, v in self.frequency.items() if v == min_frequency]
+    def remove_least_frequent(self):
+        """
+        Remove the least frequent item(s) from the cache.
+        """
+        min_frequency = min(self.frequency.values())
+        least_frequent_keys = [k for k, v in self.frequency.items() if v == min_frequency]
 
-            if len(keys_to_discard) > 1:
-                # If there are multiple keys with the same
-                # lowest frequency, use LRU to decide
-                lru_key = min(self.access_order, key=self.access_order.index)
-                discarded_key = lru_key
-            else:
-                discarded_key = keys_to_discard[0]
+        # If there are multiple least frequent keys, use LRU to decide
+        if len(least_frequent_keys) > 1:
+            lru_key = min(self.access_order, key=self.access_order.index)
+            least_frequent_keys.remove(lru_key)
 
-            print("DISCARD:", discarded_key)
-            del self.cache_data[discarded_key]
-            del self.frequency[discarded_key]
-
-            # Remove discarded key from access_order
-            self.access_order.remove(discarded_key)
+        # Remove the least frequent key(s) from cache and frequency dictionary
+        for key in least_frequent_keys:
+            del self.cache_data[key]
+            del self.frequency[key]
+            self.access_order.remove(key)
+            print("DISCARD:", key)
 
     def get(self, key):
         """
         Retrieve an item from the cache based on the provided key.
         """
         if key in self.cache_data:
+            self.frequency[key] += 1
             self.access_order.remove(key)
             self.access_order.append(key)
-            # Increment frequency of the key
-            self.frequency[key] = self.frequency.get(key, 0) + 1
             return self.cache_data[key]
         else:
             return None
