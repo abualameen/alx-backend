@@ -38,9 +38,12 @@ class LFUCache(BaseCaching):
         # Discard least frequency used items if cache exceeds capacity
         if len(self.cache_data) > self.MAX_ITEMS:
             min_frequency = min(self.frequency.values())
-            keys_to_discard = [k for k, v in self.frequency.items() if v == min_frequency]
+            keys_to_discard = [
+                k for k, v in self.frequency.items() if v == min_frequency
+               ]
             if len(keys_to_discard) > 1:
-                # If there are multiple keys with the same lowest frequency, use LRU to decide
+                # If there are multiple keys with the same lowest
+                # frequency, use LRU to decide
                 lru_key = None
                 min_index = float('inf')
                 for k in keys_to_discard:

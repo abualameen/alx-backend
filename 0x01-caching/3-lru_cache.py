@@ -1,4 +1,4 @@
- #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 this module implements the least recently used policy
 
@@ -28,7 +28,7 @@ class LRUCache(BaseCaching):
         self.cache_data[key] = item
         # self.access_order.append(key)
         if len(self.cache_data) > self.MAX_ITEMS:
-            #del self.cache_data[lru_key]
+            # del self.cache_data[lru_key]
             lru_key = self.access_order.pop(0)
             print("DISCARD:", lru_key)
             if lru_key in self.cache_data:

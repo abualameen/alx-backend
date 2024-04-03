@@ -10,7 +10,7 @@ from base_caching import BaseCaching
 class BasicCache(BaseCaching):
     """
     this class inherites from the pareent class
-    (BaseCaching) 
+    (BaseCaching)
 
     """
 

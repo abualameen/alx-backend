@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
- this module is the most recently used cache policy 
+ this module is the most recently used cache policy
  implementation
 
 """
