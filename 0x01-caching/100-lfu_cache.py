@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-This module implements the Least Frequently Used (LFU) cache policy.
+this module is the LEAST FREQUENTLY USED CACHE POLICY
 """
 
 from base_caching import BaseCaching
@@ -37,30 +37,22 @@ class LFUCache(BaseCaching):
         # Discard least frequency used items if cache exceeds capacity
         if len(self.cache_data) > self.MAX_ITEMS:
             min_frequency = min(self.frequency.values())
-            keys_to_discard = [
-                k for k, v in self.frequency.items() if v == min_frequency
-            ]
+            keys_to_discard = [k for k, v in self.frequency.items() if v == min_frequency]
 
-            # If there are multiple keys with the same
-            # lowest frequency, use LRU to decide
-            lru_key = None
-            min_index = float('inf')
-            for k in keys_to_discard:
-                if k in self.access_order and \
-                        self.access_order.index(k) < min_index:
-                    min_index = self.access_order.index(k)
-                    lru_key = k
+            if len(keys_to_discard) > 1:
+                # If there are multiple keys with the same
+                # lowest frequency, use LRU to decide
+                lru_key = min(self.access_order, key=self.access_order.index)
+                discarded_key = lru_key
+            else:
+                discarded_key = keys_to_discard[0]
 
-            discarded_key = lru_key or keys_to_discard[0]
             print("DISCARD:", discarded_key)
             del self.cache_data[discarded_key]
             del self.frequency[discarded_key]
 
             # Remove discarded key from access_order
             self.access_order.remove(discarded_key)
-        
-        # Append newly added key to the end of access_order list
-        self.access_order.append(key)
 
     def get(self, key):
         """
