@@ -44,7 +44,9 @@ class LFUCache(BaseCaching):
         Remove the least frequent item(s) from the cache.
         """
         min_frequency = min(self.frequency.values())
-        least_frequent_keys = [k for k, v in self.frequency.items() if v == min_frequency]
+        least_frequent_keys = [
+                k for k, v in self.frequency.items() if v == min_frequency
+            ]
 
         if len(least_frequent_keys) > 1:
             lru_key = min(self.access_order, key=self.access_order.index)
