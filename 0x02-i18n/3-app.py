@@ -24,6 +24,7 @@ def get_locale() -> str:
     """Determine the best match for supported languages."""
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
+
 @app.route('/')
 def index():
     """Render the index page."""
