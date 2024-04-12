@@ -1,6 +1,12 @@
+#!/usr/bin/env python3
+""" this class is..."""
+
+
 from flask import Flask, render_template
 from flask_babel import Babel, _
 import os
+import request
+
 
 app = Flask(__name__)
 babel = Babel(app)
