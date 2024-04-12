@@ -2,13 +2,8 @@
 """ this class is..."""
 
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_babel import Babel
-import request
-
-
-app = Flask(__name__)
-babel = Babel(app)
 
 
 class Config(object):
@@ -18,6 +13,8 @@ class Config(object):
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
+app = Flask(__name__)
+babel = Babel(app)
 app.config.from_object(Config)
 app.url_map.strict_slashes = False
 
