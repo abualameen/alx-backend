@@ -3,8 +3,7 @@
 
 
 from flask import Flask, render_template
-from flask_babel import Babel, _
-import os
+from flask_babel import Babel
 import request
 
 
@@ -24,10 +23,9 @@ app.url_map.strict_slashes = False
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     """Determine the best match for supported languages."""
     return request.accept_languages.best_match(app.config['LANGUAGES'])
-
 
 @app.route('/')
 def index():
